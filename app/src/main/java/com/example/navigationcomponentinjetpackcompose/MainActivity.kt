@@ -30,9 +30,8 @@ class MainActivity : ComponentActivity() {
                     val navController = rememberNavController()
                     NavHost(navController = navController, startDestination = "profile") {
                         composable("profile") { Profile(navController) }
-                        composable("friends") { Friends() }
+                        composable("friends") { Friends(navController) }
                     }
-                    Greeting("Android")
                 }
             }
         }
@@ -55,13 +54,16 @@ fun Profile(navController: NavController) {
 }
 
 @Composable
-fun Friends() {
+fun Friends(navController: NavController) {
     Column(
         Modifier.fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
         Text(text = "Friends")
+        Button(onClick = { navController.navigate("profile") }) {
+            Text("Go to Profile")
+        }
     }
 }
 
