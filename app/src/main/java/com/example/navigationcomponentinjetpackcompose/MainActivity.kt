@@ -3,6 +3,7 @@ package com.example.navigationcomponentinjetpackcompose
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.activity.viewModels
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -35,6 +36,11 @@ class MainActivity : ComponentActivity() {
                         startDestination = "login"
                     ) {
                         composable("login") {
+                            val viewModel by viewModels<LoginViewModel> {
+                                it.defaultViewModelProviderFactory
+                            }
+
+                            //Login(navController, viewModel)
                             Login(navController)
                         }
                         composable(
