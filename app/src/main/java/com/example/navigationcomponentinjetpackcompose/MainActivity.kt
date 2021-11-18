@@ -28,12 +28,34 @@ class MainActivity : ComponentActivity() {
                 // A surface container using the 'background' color from the theme
                 Surface(color = MaterialTheme.colors.background) {
                     val navController = rememberNavController()
-                    NavHost(navController = navController, startDestination = "profile") {
+                    NavHost(navController = navController, startDestination = "login") {
+                        composable("login") { Login(navController) }
                         composable("profile") { Profile(navController) }
                         composable("friends") { Friends(navController) }
                     }
                 }
             }
+        }
+    }
+}
+
+@Composable
+fun Login(navController: NavController) {
+    Column(
+        Modifier.fillMaxSize(),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center
+    ) {
+        Text(text = "Login")
+
+        Button(
+            onClick = {
+                navController.navigate("profile") {
+                    popUpTo("login") { inclusive = true }
+                }
+            },
+        ) {
+            Text("Go to profile")
         }
     }
 }
@@ -61,7 +83,14 @@ fun Friends(navController: NavController) {
         verticalArrangement = Arrangement.Center
     ) {
         Text(text = "Friends")
-        Button(onClick = { navController.navigate("profile") }) {
+        Button(
+            onClick = {
+                navController.navigate("profile") {
+                    launchSingleTop = true
+                    popUpTo("friends") { inclusive = true }
+                }
+            },
+        ) {
             Text("Go to Profile")
         }
     }
