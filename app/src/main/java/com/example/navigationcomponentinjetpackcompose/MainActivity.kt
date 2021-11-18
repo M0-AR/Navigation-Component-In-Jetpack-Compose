@@ -30,7 +30,7 @@ class MainActivity : ComponentActivity() {
                     val navController = rememberNavController()
                     NavHost(navController = navController, startDestination = "login") {
                         composable("login") { Login(navController) }
-                        composable("profile") { Profile(navController) }
+                        composable("profile") { Profile(navController, "MD") }
                         composable("friends") { Friends(navController) }
                     }
                 }
@@ -61,13 +61,13 @@ fun Login(navController: NavController) {
 }
 
 @Composable
-fun Profile(navController: NavController) {
+fun Profile(navController: NavController, name: String) {
     Column(
         Modifier.fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
-        Text(text = "Profile")
+        Text(text = "Profile: Hello, $name")
 
         Button(onClick = { navController.navigate("friends") }) {
             Text("Go to Friends")
