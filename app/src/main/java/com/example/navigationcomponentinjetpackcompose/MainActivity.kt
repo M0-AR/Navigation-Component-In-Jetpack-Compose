@@ -15,9 +15,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.NavController
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 import com.example.navigationcomponentinjetpackcompose.ui.theme.NavigationComponentInJetpackComposeTheme
 
 class MainActivity : ComponentActivity() {
@@ -30,7 +32,9 @@ class MainActivity : ComponentActivity() {
                     val navController = rememberNavController()
                     NavHost(navController = navController, startDestination = "login") {
                         composable("login") { Login(navController) }
-                        composable("profile") { Profile(navController, "MD") }
+                        composable("profile/{name}", arguments = listOf(navArgument("name") {
+                            type = NavType.StringType
+                        })) { Profile(navController, it.arguments?.getString("name") ?: "My name") }
                         composable("friends") { Friends(navController) }
                     }
                 }
@@ -50,7 +54,7 @@ fun Login(navController: NavController) {
 
         Button(
             onClick = {
-                navController.navigate("profile") {
+                navController.navigate("profile/MD") {
                     popUpTo("login") { inclusive = true }
                 }
             },
