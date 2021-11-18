@@ -30,12 +30,29 @@ class MainActivity : ComponentActivity() {
                 // A surface container using the 'background' color from the theme
                 Surface(color = MaterialTheme.colors.background) {
                     val navController = rememberNavController()
-                    NavHost(navController = navController, startDestination = "login") {
-                        composable("login") { Login(navController) }
-                        composable("profile/{name}", arguments = listOf(navArgument("name") {
-                            type = NavType.StringType
-                        })) { Profile(navController, it.arguments?.getString("name") ?: "My name") }
-                        composable("friends") { Friends(navController) }
+                    NavHost(
+                        navController = navController,
+                        startDestination = "login"
+                    ) {
+                        composable("login") {
+                            Login(navController)
+                        }
+                        composable(
+                            "profile/{name}",
+                            arguments = listOf(navArgument(
+                                "name"
+                            ) {
+                                type = NavType.StringType
+                            })
+                        ) {
+                            Profile(
+                                navController,
+                                it.arguments?.getString("name") ?: "My name"
+                            )
+                        }
+                        composable("friends") {
+                            Friends(navController)
+                        }
                     }
                 }
             }
@@ -89,7 +106,7 @@ fun Friends(navController: NavController) {
         Text(text = "Friends")
         Button(
             onClick = {
-                navController.navigate("profile") {
+                navController.navigate("profile/{name}") {
                     launchSingleTop = true
                     popUpTo("friends") { inclusive = true }
                 }
