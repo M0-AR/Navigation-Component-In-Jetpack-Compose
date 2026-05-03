@@ -4,17 +4,13 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material.Button
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Surface
-import androidx.compose.material.Text
+import androidx.compose.foundation.layout.*
+import androidx.compose.material.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
@@ -28,7 +24,6 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             NavigationComponentInJetpackComposeTheme {
-                // A surface container using the 'background' color from the theme
                 Surface(color = MaterialTheme.colors.background) {
                     val navController = rememberNavController()
                     NavHost(
@@ -36,24 +31,18 @@ class MainActivity : ComponentActivity() {
                         startDestination = "login"
                     ) {
                         composable("login") {
-                            val viewModel by viewModels<LoginViewModel> {
-                                it.defaultViewModelProviderFactory
-                            }
-
-                            //Login(navController, viewModel)
-                            Login(navController)
+                            val viewModel: LoginViewModel by viewModels()
+                            Login(navController, viewModel)
                         }
                         composable(
                             "profile/{name}",
-                            arguments = listOf(navArgument(
-                                "name"
-                            ) {
+                            arguments = listOf(navArgument("name") {
                                 type = NavType.StringType
                             })
-                        ) {
+                        ) { backStackEntry ->
                             Profile(
                                 navController,
-                                it.arguments?.getString("name") ?: "My name"
+                                backStackEntry.arguments?.getString("name") ?: "User"
                             )
                         }
                         composable("friends") {
@@ -67,17 +56,25 @@ class MainActivity : ComponentActivity() {
 }
 
 @Composable
-fun Login(navController: NavController) {
+fun Login(navController: NavController, viewModel: LoginViewModel) {
+    val name by viewModel.name
     Column(
         Modifier.fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
-        Text(text = "Login")
-
+        Text(text = "Login Screen", style = MaterialTheme.typography.h4)
+        Spacer(modifier = Modifier.height(16.dp))
+        TextField(
+            value = name,
+            onValueChange = { viewModel.onNameChange(it) },
+            label = { Text("Enter your name") }
+        )
+        Spacer(modifier = Modifier.height(16.dp))
         Button(
             onClick = {
-                navController.navigate("profile/MD") {
+                val destinationName = if (name.isBlank()) "Guest" else name
+                navController.navigate("profile/$destinationName") {
                     popUpTo("login") { inclusive = true }
                 }
             },
@@ -94,8 +91,8 @@ fun Profile(navController: NavController, name: String) {
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
-        Text(text = "Profile: Hello, $name")
-
+        Text(text = "Profile: Hello, $name!", style = MaterialTheme.typography.h5)
+        Spacer(modifier = Modifier.height(16.dp))
         Button(onClick = { navController.navigate("friends") }) {
             Text("Go to Friends")
         }
@@ -109,31 +106,16 @@ fun Friends(navController: NavController) {
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
-        Text(text = "Friends")
+        Text(text = "Friends List", style = MaterialTheme.typography.h5)
+        Spacer(modifier = Modifier.height(16.dp))
         Button(
             onClick = {
-                navController.navigate("profile/{name}") {
-                    launchSingleTop = true
+                navController.navigate("login") {
                     popUpTo("friends") { inclusive = true }
                 }
             },
         ) {
-            Text("Go to Profile")
+            Text("Back to Login")
         }
-    }
-}
-
-@Composable
-fun Greeting(name: String) {
-    val navController = rememberNavController()
-
-    Text(text = "Hello $name!")
-}
-
-@Preview(showBackground = true)
-@Composable
-fun DefaultPreview() {
-    NavigationComponentInJetpackComposeTheme {
-        Greeting("Android")
     }
 }
